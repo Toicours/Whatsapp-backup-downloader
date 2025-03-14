@@ -1,0 +1,14 @@
+# Environment and credentials
+.env
+credentials.json
+token.json
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Downloaded backups
+whatsapp_backups/
+
+# Virtual environment
+venv/
+env/

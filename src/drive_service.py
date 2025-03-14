@@ -1,5 +1,5 @@
 import os
-import pickle
+import json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -16,10 +16,15 @@ class DriveService:
         
         # Check if token file exists
         if os.path.exists(self.config.token_file):
-            creds = Credentials.from_authorized_user_info(
-                pickle.load(open(self.config.token_file, 'rb')), 
-                self.config.scopes
-            )
+            try:
+                with open(self.config.token_file, 'r') as token:
+                    creds_data = json.load(token)
+                    creds = Credentials.from_authorized_user_info(creds_data, self.config.scopes)
+            except Exception as e:
+                print(f"Erreur lors de la lecture du token: {e}")
+                # Si le fichier est corrompu ou dans un format incorrect, on le supprime
+                os.remove(self.config.token_file)
+                creds = None
             
         # If credentials don't exist or are invalid, get new ones
         if not creds or not creds.valid:
@@ -33,8 +38,8 @@ class DriveService:
                 creds = flow.run_local_server(port=0)
             
             # Save the credentials for future runs
-            with open(self.config.token_file, 'wb') as token:
-                pickle.dump(creds.to_json(), token)
+            with open(self.config.token_file, 'w') as token:
+                token.write(creds.to_json())
         
         return build('drive', 'v3', credentials=creds)
 

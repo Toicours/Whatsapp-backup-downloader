@@ -17,4 +17,7 @@ class Config:
         os.makedirs(self.backup_dir, exist_ok=True)
         
         # API scopes required
-        self.scopes = ['https://www.googleapis.com/auth/drive.readonly']
+        self.scopes = [
+            'https://www.googleapis.com/auth/drive.readonly',  # Lecture de Google Drive
+            'https://www.googleapis.com/auth/drive.appdata'    # Accès à l'espace appDataFolder
+        ]
